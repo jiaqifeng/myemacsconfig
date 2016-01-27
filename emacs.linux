@@ -1,0 +1,124 @@
+(set-language-environment "Chinese-GB")
+
+(add-to-list 'load-path (expand-file-name "~/.emacs.d"))
+
+(server-start)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; no tool bar
+(tool-bar-mode nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; highlight match parenthsis
+(show-paren-mode 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; title show file path
+(setq frame-title-format
+          '("emacs@:%f" (dired-directory dired-directory "")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; highlight yaml mode
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; backup file directory
+(setq backup-directory-alist '(("." . "/tmp")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; markdown supported
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  remap key C-z, because it's no use under X
+;;
+(define-prefix-command 'ctl-z-map)
+(global-set-key (kbd "C-z") 'ctl-z-map)
+(global-set-key "\C-z\C-d" 'fjq-insert-datetime)
+;(define-key ctl-z-map (kbd "d") 'fjq-insert-datetime)
+(global-set-key (kbd "\C-zs") (quote copy-string))
+(global-set-key (kbd "\C-z\C-a") 'copy-line)
+(global-set-key (kbd "C-o") 'other-window)
+(global-set-key (kbd "M-g") 'goto-line)
+
+(defun fjq-insert-datetime ()
+"insert current data after current point. By fjq"
+    (interactive)
+    (insert (format-time-string "%Y-%m-%d %H:%M")))
+
+;;;;;;;; fast copy key stroke
+(defun copy-string (&optional arg)
+  "Copy a sequence of string into kill-ring"
+  (interactive)
+  (setq onPoint (point))
+  ( setq delimiter "[\t :()]")
+  (let (( beg (progn (re-search-backward delimiter (line-beginning-position) 3 1)
+         (if (looking-at delimiter) (+ (point) 1) (point) )))
+        ( end  (progn  (goto-char onPoint) (re-search-forward delimiter (line-end-position) 3 1)
+           (if (looking-back delimiter) (- (point) 1) (point) ) )))
+    (copy-region-as-kill beg end)))
+
+(defun copy-line (&optional arg)
+ "Save current line into Kill-Ring without mark the line"
+ (interactive "P")
+ (let ((beg (line-beginning-position))
+       (end (line-end-position arg)))
+ (copy-region-as-kill beg end))
+)
+(defun copy-word (&optional arg)
+  "Copy words at point"
+  (interactive "P")
+    (let ((beg (progn (if (looking-back "[a-zA-Z0-9]" 1) (backward-word 1)) (point)))
+      (end (progn (forward-word arg) (point))))
+      (copy-region-as-kill beg end))
+)
+
+;;;; This snippet enables lua-mode
+;; This line is not necessary, if lua-mode.el is already on your load-path
+(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+;; set TAGS file
+(setq tags-file-name "~/work/guardian/ngx_proxy/TAGS")
+
+;; ido for buffer switch
+(require 'ido)
+(ido-mode t)
+(global-set-key (kbd "<backtab>") 'ido-switch-buffer) ; shitf-tab
+(global-set-key [f5] 'ido-switch-buffer)
+(global-set-key [f6] 'ido-find-file)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; show file&dir of buffer in title
+(setq frame-title-format
+          '("emacs@:%f" (dired-directory dired-directory "")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;; windows move up / down
+(defun window-move-up (&optional arg)
+  "Current window move-up 2 lines."
+  (interactive "P")
+  (if arg
+          (scroll-up arg)
+        (scroll-up 2)))
+
+(defun window-move-down (&optional arg)
+  "Current window move-down 3 lines."
+  (interactive "P")
+  (if arg
+          (scroll-down arg)
+        (scroll-down 3)))
+
+(defun other-window-move-up (&optional arg)
+  "Other window move-up 1 lines."
+  (interactive "p")
+  (scroll-other-window arg))
+
+(defun other-window-move-down (&optional arg)
+  "Other window move-down 2 lines."
+  (interactive "P")
+  (if arg
+          (scroll-other-window-down arg)
+        (scroll-other-window-down 2)))
+(global-set-key [(meta n)] 'window-move-up)
+(global-set-key [(meta p)] 'window-move-down)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;git-emacs
+(add-to-list 'load-path "~/.emacs.d/git-emacs/")
+(require 'git-emacs)
