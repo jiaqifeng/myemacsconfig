@@ -13,6 +13,9 @@
 (setq frame-title-format
           '("emacs@:%f" (dired-directory dired-directory "")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ediff no float frame
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; highlight yaml mode
 (require 'yaml-mode)
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
