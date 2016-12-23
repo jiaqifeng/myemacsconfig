@@ -80,7 +80,7 @@
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
 (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 ;; set TAGS file
-(setq tags-file-name "~/work/guardian/ngx_proxy/TAGS")
+;(setq tags-file-name "~/work/guardian/ngx_proxy/TAGS")
 
 ;; ido for buffer switch
 (require 'ido)
@@ -125,3 +125,170 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;git-emacs
 (add-to-list 'load-path "~/.emacs.d/git-emacs/")
 (require 'git-emacs)
+
+;; color theme
+(require 'color-theme)
+(color-theme-initialize)
+;; Blackboard Colour Theme for Emacs.
+;;
+;; Defines a colour scheme resembling that of the original TextMate Blackboard colour theme.
+;; To use add the following to your .emacs file (requires the color-theme package):
+;;
+;; (require 'color-theme)
+;; (color-theme-initialize)
+;; (load-file "~/.emacs.d/themes/color-theme-blackboard.el")
+;;
+;; And then (color-theme-blackboard) to activate it.
+;;
+;; MIT License Copyright (c) 2008 JD Huntington 
+;; Credits due to the excellent TextMate Blackboard theme
+;;
+;; All patches welcome
+ 
+(defun color-theme-blackboard ()
+  "Color theme by JD Huntington, based off the TextMate Blackboard theme, created 2008-11-27"
+  (interactive)
+  (color-theme-install
+   '(color-theme-blackboard
+     (
+      ;; (background-color . "#0C1021")
+      (background-color . "black")
+      (background-mode . dark)
+      (border-color . "black")
+      (cursor-color . "#A7A7A7")
+      ;(foreground-color . "#F8F8F8")
+      (foreground-color . "#B0B0B0")
+      (mouse-color . "sienna1"))
+     ;; (default ((t (:background "#0C1021" :foreground "#F8F8F8"))))
+     ;; (default ((t (:background "black" :foreground "#F8F8F8"))))
+	 (default ((t (:background "black" :foreground "#808080"))))
+     (blue ((t (:foreground "blue"))))
+     (bold ((t (:bold t))))
+     (bold-italic ((t (:bold t))))
+     (border-glyph ((t (nil))))
+     (buffers-tab ((t (:background "#0C1021" :foreground "#F8F8F8"))))
+     (font-lock-builtin-face ((t (:foreground "#F8F8F8"))))
+     (font-lock-comment-face ((t (:italic t :foreground "#AEAEAE"))))
+     (font-lock-constant-face ((t (:foreground "#D8FA3C"))))
+     (font-lock-doc-string-face ((t (:foreground "DarkOrange"))))
+     (font-lock-function-name-face ((t (:foreground "#FF6400"))))
+     (font-lock-keyword-face ((t (:foreground "#FBDE2D"))))
+     (font-lock-preprocessor-face ((t (:foreground "Aquamarine"))))
+     (font-lock-reference-face ((t (:foreground "SlateBlue"))))
+ 
+     (font-lock-regexp-grouping-backslash ((t (:foreground "#E9C062"))))
+     (font-lock-regexp-grouping-construct ((t (:foreground "red"))))
+ 
+     (font-lock-string-face ((t (:foreground "#61CE3C"))))
+     (font-lock-type-face ((t (:foreground "#8DA6CE"))))
+     ;(font-lock-variable-name-face ((t (:foreground "#FF6400"))))
+     (font-lock-variable-name-face ((t (:foreground "#40E0D0"))))
+     (font-lock-warning-face ((t (:bold t :foreground "Pink"))))
+     (gui-element ((t (:background "#D4D0C8" :foreground "black"))))
+     (region ((t (:background "#253B76"))))
+     (mode-line ((t (:background "grey75" :foreground "black"))))
+     ;(highlight ((t (:background "#222222"))))
+     (highlight ((t (:background "#001"))))
+     (highline-face ((t (:background "SeaGreen"))))
+     (italic ((t (nil))))
+     (left-margin ((t (nil))))
+     (text-cursor ((t (:background "yellow" :foreground "black"))))
+     (toolbar ((t (nil))))
+     (underline ((nil (:underline nil))))
+     (zmacs-region ((t (:background "snow" :foreground "ble")))))))
+(color-theme-blackboard)
+;(color-theme-gnome2)
+;(color-theme-lethe)
+;(color-theme-clarity)
+
+;;;;;;;; jdee java ide
+(add-to-list 'load-path "~/.emacs.d/jdee-2.4.1/lisp")
+(load "jde")
+;(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+; '(jde-jdk (quote ("1.8.0")))
+; '(jde-jdk-registry (quote (("1.8.0" . "/usr/java/jdk1.8.0_71")))))
+;(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+; )
+(setq jde-enable-abbrev-mode t)
+(jde-gen-define-abbrev-template "melse" '('> "else {" '> 'n
+	  '> 'r 'n "}"))
+(jde-gen-define-abbrev-template "sout" '('> "System.out.println(\"\");"))
+(jde-gen-define-abbrev-template "souf" '('> "System.out.print(\"\");"))
+(jde-gen-define-abbrev-template "psvm" '('> "public static void main(String[] args) {" 'n 'n "}"))
+
+;; sort file in dired
+(defun xah-dired-sort ()
+  "Sort dired dir listing in different ways.
+Prompt for a choice.
+URL `http://ergoemacs.org/emacs/dired_sort.html'
+Version 2015-07-30"
+  (interactive)
+  (let (-sort-by -arg)
+    (setq -sort-by (ido-completing-read "Sort by:" '( "date" "size" "name" "dir")))
+    (cond
+     ((equal -sort-by "name") (setq -arg "-Al --si --time-style long-iso "))
+     ((equal -sort-by "date") (setq -arg "-Al --si --time-style long-iso -t"))
+     ((equal -sort-by "size") (setq -arg "-Al --si --time-style long-iso -S"))
+     ((equal -sort-by "dir") (setq -arg "-Al --si --time-style long-iso --group-directories-first"))
+     (t (error "logic error 09535" )))
+    (dired-sort-other -arg )))
+
+
+(add-to-list 'load-path "~/.emacs.d/auto-complete-master")
+(add-to-list 'load-path "~/.emacs.d/popup-el-master")
+(require 'auto-complete)
+(require 'auto-complete-config)
+(ac-config-default)
+
+(add-to-list 'load-path "~/.emacs.d/yasnippet-master")
+(require 'yasnippet)
+(yas-global-mode 1)
+
+
+;(setq url-proxy-services '(("no_proxy" . "work\\.com")
+;                           ("http" . "cn-proxy.jp.oracle.com:80")))
+
+;;;;;;;; cedet settings
+(global-ede-mode 1)
+(require 'semantic/sb)
+(global-semantic-mru-bookmark-mode)
+(semantic-mode 1)
+(which-function-mode)  ; show current function name on mode line
+;;;;;;;; add c++ std headers
+(setq include-dirs ())
+(defconst cedet-linux-include-dirs
+  (list "/usr/include/c++/4.8/"))
+(setq include-dirs (append include-dirs cedet-linux-include-dirs))
+(mapc (lambda (dir)
+  (semantic-add-system-include dir 'c++-mode))
+  include-dirs)
+(global-set-key (kbd "\C-c-") 'senator-fold-tag)
+(global-set-key (kbd "\C-c+") 'senator-unfold-tag)
+;(global-set-key (kbd "\C-j") 'next-buffer)
+(put 'narrow-to-region 'disabled nil)
+
+;; enable code in org-mode
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((R . t)
+   (emacs-lisp . t)
+   (python . t)
+   (sh . t)
+   (C . t)
+   (C++ . t)
+   (java . t)
+   ))
+;; all python code be safe
+(defun my-org-confirm-babel-evaluate (lang body)
+  (not (or (string= lang "cpp") (string= lang "python") (string= lang "C") (string= lang "java"))))
+(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+(setq org-src-fontify-natively t)
+
